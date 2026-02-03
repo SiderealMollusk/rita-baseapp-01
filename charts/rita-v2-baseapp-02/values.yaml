@@ -57,14 +57,14 @@ database:
 # If externalSecrets.enabled is true, an ExternalSecret resource will be created
 # and the deployment will use it. Otherwise, a standard Secret is created from 'secrets' values.
 externalSecrets:
-  enabled: false
+  enabled: true
   secretStoreName: "1password-vault" # Name of the ClusterSecretStore or SecretStore
   secretStoreKind: "ClusterSecretStore"
   refreshInterval: "1h"
   # Mapping of keys in the remote secret to the environment variables
   # This usually matches the keys in 1Password
   remoteRef:
-    key: "rita-baseapp-secrets" # The name/ID of the secret in 1Password
+    key: "rita-baseapp-01-secrets" # The name/ID of the secret in 1Password
 
 secrets:
   DATABASE_USER: "postgres"
