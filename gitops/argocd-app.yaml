@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rita-v2-baseapp-02
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/your-username/rita-v2-baseapp-02.git
+    targetRevision: HEAD
+    path: charts/rita-v2-baseapp-02
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rita-apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
