@@ -136,3 +136,21 @@ Then update the `database.host` in the Base App's `values.yaml` to `postgres.dat
 | Grafana | `grafana.monitoring.svc:3000` | `grafana.homelab.local` |
 | OTEL Collector | `otel-collector.monitoring.svc:4318` | N/A |
 | Base App | `rita-v2-baseapp-02.rita-apps.svc:80` | `baseapp.homelab.local` |
+
+---
+
+## 🏗️ Side-by-Side Development Workflow
+
+If you want a single coding agent to edit both the **Base App** and the **Platform Repo** simultaneously without permanently merging them, follow this "Bridge" pattern:
+
+1.  **Clone the Platform Repo:** Inside your Base App root, run:
+    ```bash
+    git clone https://github.com/SiderealMollusk/rita-pve02.git .homelab-bridge
+    ```
+2.  **Ignore the Bridge:** Add `.homelab-bridge/` to your `.gitignore` to prevent committing the entire platform repo into your app repo.
+3.  **Start the Agent in the Root:** Point your coding agent to the Base App root. It will now see the application code in `src/` and the infrastructure code in `.homelab-bridge/`.
+
+### Why this works:
+- **Zero Commitment**: Simply delete `.homelab-bridge/` when done.
+- **Cross-Repo Context**: The agent can reference Ansible playbooks in the bridge while updating Helm charts in the app repo.
+- **Atomic Changes**: The agent can verify that a change in the app's `values.yaml` is correctly handled by the platform's ArgoCD manifests.
