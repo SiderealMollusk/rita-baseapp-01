@@ -1,0 +1,45 @@
+# Unified Observability Stack Values
+
+grafana:
+  enabled: true
+  image: grafana/grafana:latest
+  service:
+    type: ClusterIP
+    port: 3000
+  ingress:
+    enabled: false
+    className: "traefik"
+    hosts:
+      - host: grafana.homelab.local
+  adminPassword: "admin" # In production, use a secret
+
+prometheus:
+  enabled: true
+  image: prom/prometheus:latest
+  service:
+    port: 9090
+
+loki:
+  enabled: true
+  image: grafana/loki:latest
+  service:
+    port: 3100
+
+tempo:
+  enabled: true
+  image: grafana/tempo:latest
+  service:
+    port: 3200
+
+otelCollector:
+  enabled: true
+  image: otel/opentelemetry-collector-contrib:latest
+  service:
+    port: 4317 # gRPC
+    portHttp: 4318 # HTTP
+    portMetrics: 8889
+
+persistence:
+  enabled: false # For homelab testing, we might want to use emptyDir or a PVC
+  size: 10Gi
+  storageClassName: ""

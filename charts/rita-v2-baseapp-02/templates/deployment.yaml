@@ -31,7 +31,19 @@ spec:
               path: /api/v1/health
               port: http
           env:
-            {{- toYaml .Values.env | nindent 12 }}
+            - name: DATABASE_HOST
+              value: {{ .Values.database.host | quote }}
+            - name: DATABASE_PORT
+              value: {{ .Values.database.port | quote }}
+            {{- if .Values.otel.enabled }}
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: {{ .Values.otel.exporter.traces.endpoint | quote }}
+            - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+              value: {{ .Values.otel.exporter.metrics.endpoint | quote }}
+            {{- end }}
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
