@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rita-v2-baseapp-02.fullname" . }}
+  labels:
+    {{- include "rita-v2-baseapp-02.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "rita-v2-baseapp-02.selectorLabels" . | nindent 4 }}
