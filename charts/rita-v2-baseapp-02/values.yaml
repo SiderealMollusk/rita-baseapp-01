@@ -12,13 +12,19 @@ service:
 
 ingress:
   enabled: false
-  className: ""
-  annotations: {}
+  className: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
   hosts:
-    - host: chart-example.local
+    - host: baseapp.homelab.local
       paths:
         - path: /
           pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: baseapp-tls
+  #    hosts:
+  #      - baseapp.homelab.local
 
 resources:
   limits:
@@ -28,18 +34,38 @@ resources:
     cpu: 100m
     memory: 256Mi
 
-env:
-  - name: DATABASE_HOST
-    value: "postgres-service"
-  - name: DATABASE_PORT
-    value: "5432"
-  - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-    value: "http://otel-collector:4318/v1/traces"
-  - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-    value: "http://otel-collector:4318/v1/metrics"
+# Extra environment variables
+env: []
 
-# Secrets should be managed via sealed-secrets or external-secrets in a real setup
-# For demo purposes, we can put placeholders here
+# Configuration for OpenTelemetry
+otel:
+  enabled: true
+  # Should point to the OTLP collector service
+  # Default assumes observability-stack is deployed in the same namespace
+  exporter:
+    traces:
+      endpoint: "http://otel-collector:4318/v1/traces"
+    metrics:
+      endpoint: "http://otel-collector:4318/v1/metrics"
+
+# Database configuration
+database:
+  host: "postgres-service"
+  port: "5432"
+
+# Secrets management
+# If externalSecrets.enabled is true, an ExternalSecret resource will be created
+# and the deployment will use it. Otherwise, a standard Secret is created from 'secrets' values.
+externalSecrets:
+  enabled: false
+  secretStoreName: "1password-vault" # Name of the ClusterSecretStore or SecretStore
+  secretStoreKind: "ClusterSecretStore"
+  refreshInterval: "1h"
+  # Mapping of keys in the remote secret to the environment variables
+  # This usually matches the keys in 1Password
+  remoteRef:
+    key: "rita-baseapp-secrets" # The name/ID of the secret in 1Password
+
 secrets:
   DATABASE_USER: "postgres"
   DATABASE_PASSWORD: "postgres"

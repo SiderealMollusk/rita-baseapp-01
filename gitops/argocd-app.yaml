@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-username/rita-v2-baseapp-02.git
-    targetRevision: HEAD
+    repoURL: https://github.com/SiderealMollusk/rita-baseapp-01.git
+    targetRevision: main
     path: charts/rita-v2-baseapp-02
     helm:
       valueFiles:
